@@ -145,6 +145,8 @@ class Backtester:
         self.last_position_status = self.NO_POSITION
 
     def _download_or_load_candles(self, timeframe):
+        print(self.candles_file_path)
+        raise RuntimeError("just to stop the app")
         print("download_or_load_candles", timeframe, "started")
         if os.path.isfile(self.candles_file_path[timeframe]):
             self.candles_list[timeframe] = pickle.load(
