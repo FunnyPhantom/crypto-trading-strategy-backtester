@@ -13,6 +13,7 @@ import plot_maker
 import report_maker
 import candle
 from position_result_and_candles import PositionResultAndCandles
+from binance_data.downloader import download_all_kline_data
 
 
 class Backtester:
@@ -96,22 +97,6 @@ class Backtester:
         ).replace(tzinfo=pytz.UTC)
         self.start_date_timestamp = int(self.start_date.timestamp() * 1000)
         self.end_date_timestamp = int(self.end_date.timestamp() * 1000)
-        self.candles_file_path = {}
-        for tf in all_timeframes_list:
-            self.candles_file_path[tf] = (
-                config.COINS_SYMBOL
-                + "_"
-                + str(config.START_DAY)
-                + str(config.START_MONTH)
-                + str(config.START_YEAR)
-                + "_"
-                + str(config.END_DAY)
-                + str(config.END_MONTH)
-                + str(config.END_YEAR)
-                + "_"
-                + tf
-                + "_candles.pickle"
-            )
         self.report_percentiles_count = report_percentiles_count
         self.train_csv_file_path = train_csv_file_path
         self.test_csv_file_path = test_csv_file_path
@@ -145,7 +130,8 @@ class Backtester:
         self.last_position_status = self.NO_POSITION
 
     def _download_or_load_candles(self, timeframe):
-        print(self.candles_file_path)
+        ## Tech-debt: this may lead to bug, but is okay for POC
+        download_all_kline_data(symbol=self.coins_symbol, time_frames=timeframe)
         raise RuntimeError("just to stop the app")
         print("download_or_load_candles", timeframe, "started")
         if os.path.isfile(self.candles_file_path[timeframe]):
